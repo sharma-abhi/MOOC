@@ -1,4 +1,4 @@
-### Study Design
+### Instruction List
 Following steps were completed in order:
 * Step 1
 
