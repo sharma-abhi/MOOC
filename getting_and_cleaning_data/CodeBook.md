@@ -1,4 +1,4 @@
-### Tidy Dataset Creation Steps
+### Study Design
 Following steps were completed in order:
 * Step 1
 
@@ -51,7 +51,7 @@ mean: Mean value
 
 std: Standard deviation
 
-### DATA DICTIONARY
+### Code Book
 * subject 2
 
   subject ids 
