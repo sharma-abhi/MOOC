@@ -54,7 +54,8 @@ df <- df[,c(1,mean_cols,std_cols,563)]
 activity_labels <- read.table("./UCI HAR Dataset/activity_labels.txt", stringsAsFactors = FALSE)
 # Using descriptive activity names to name the activities in the data set
 df$activity <- factor(df$activity,labels=activity_labels$V2)
-
+names(df) <- gsub("\\()","",names(df))
+names(df) <- gsub("-",".",names(df))
 ## Step 5
 
 # creating a second, independent tidy data set with the average of each 
