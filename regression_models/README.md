@@ -9,10 +9,12 @@ You work for Motor Trend, a magazine about the automobile industry. Looking at a
 
 Files in this Repository:
 
-1. Project.Rmd
+1. Project.Rmd.
 This is the R markdown file with all the project related code and analysis.
-2. project.html
-This is the Knit HTML document created from the R markdown file.This can also be acccessed at 
-3. Motor Trend Analysis.pdf 
+2. project.html.
+This is the Knit HTML document created from the R markdown file. 
+The website can be acccessed at http://sharma-abhi.github.io/datasciencecoursera/regression_models/project.html
+3. Motor Trend Analysis.pdf.
 This is the PDF document with the project results, created from the Knit HTML document above.
-4. project.pdf
+4. project.pdf.
+This is the PDF document created with Knit PDF in Rstudio.
