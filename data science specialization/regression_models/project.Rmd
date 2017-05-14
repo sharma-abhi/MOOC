@@ -1,0 +1,127 @@
+---
+title: "Motor Trend Analysis"
+author: "Abhijeet Sharma"
+date: "Wednesday, June 17, 2015"
+output:
+  html_document:
+    fig_width: 5
+  pdf_document:
+    fig_crop: no
+---
+
+Introduction
+
+You work for Motor Trend, a magazine about the automobile industry. Looking at 
+a data set of a collection of cars, they are interested in exploring the 
+relationship between a set of variables and miles per gallon (MPG) (outcome). 
+They are particularly interested in the following two questions:
+
+"Is an automatic or manual transmission better for MPG"
+"Quantify the MPG difference between automatic and manual transmissions"
+
+First, We load the dataset in R and get a general feel of it.
+```{r echo=FALSE}
+data(mtcars)
+library(ggplot2)
+```
+```{r}
+dim(mtcars)
+str(mtcars)
+```
+
+We are especially interested in the "am" column which represents the 
+Transmission (0 = automatic, 1 = manual)
+```{r echo=FALSE}
+mtcars$am <- factor(mtcars$am, labels=c("automatic", "manual"))
+```
+Plotting the mpg values with this transmission column using the number of 
+cylinders as color factor, We investigate if there might be other factors 
+involved too.
+We have used the "jitter" parameter to give us a better view of the data.
+
+```{r echo=FALSE}
+nCyl <- factor(mtcars$cyl)
+ggplot(data=mtcars, aes(x=am, y=mpg,color=nCyl)) + 
+    geom_point(position="jitter") + ggtitle("Comparision of mpg by 
+                                            Transmission Type") + 
+    xlab("Transmission Type") +  ylab("mpg(in Miles/(US) gallon")
+```
+
+```{r echo=FALSE}
+auto <- mean(mtcars[,"mpg"][mtcars[,"am"] == "automatic" & mtcars[,"cyl"] == 4])
+auto <- c(auto, mean(mtcars[,"mpg"][mtcars[,"am"] == "automatic" & 
+                                        mtcars[,"cyl"] == 6]))
+auto <- c(auto, mean(mtcars[,"mpg"][mtcars[,"am"] == "automatic" & 
+                                        mtcars[,"cyl"] == 8]))
+manual <- mean(mtcars[,"mpg"][mtcars[,"am"] == "manual" & mtcars[,"cyl"] == 4])
+manual <- c(manual, mean(mtcars[,"mpg"][mtcars[,"am"] == "manual" & 
+                                            mtcars[,"cyl"] == 6]))
+manual <- c(manual, mean(mtcars[,"mpg"][mtcars[,"am"] == "manual" & 
+                                            mtcars[,"cyl"] == 8]))
+```
+
+Difference in Average Means:
+```{r echo=FALSE}
+data.frame(auto=auto, manual=manual,diff=auto-manual,row.names=c("4","6","8"))
+```
+
+We observe that difference in average mpg between automatic and manual is
+higher for 4-cylinder cars compared to 6-cylinder and 8-cylinder cars.
+
+We now do a linear regression on the variables.
+We now build and compare multiple models:
+```{r}
+fit <- lm(mpg ~ am,data=mtcars)
+fit2 <- lm(mpg ~ am + cyl, data=mtcars)
+fit3 <- lm(mpg ~ am + cyl * hp, data=mtcars)
+fit4 <- lm(mpg ~ am + cyl * hp + wt, data=mtcars)
+anova(fit, fit2, fit3, fit4)
+```
+
+We also check the RMSE values:
+```{r echo=FALSE}
+l <- lapply(list(fit, fit2, fit3, fit4), summary)
+sigma <- numeric()
+for (i in l){
+    sigma <- c(sigma, i$sigma)
+}
+data.frame(sigma=sigma, row.names = c("fit", "fit2", "fit3", "fit4"))
+```
+
+From the results above, we select fit4 as our final model as it has the lowest 
+RMSE scores.
+
+We now check the residual plots:
+```{r fig.height=7, fig.width=10}
+par(mfrow=c(2,2))
+plot(fit4)
+```
+
+We observe that even though there are couple of outliers, they aren't very 
+influential, so we keep those in the dataset(Also, the first plot is almost 
+linear in y-axis as it should be.
+
+Finally, we get the coefficient values for the final model.
+```{r}
+round(summary(fit4)$coef[,1],3)
+```
+The result tells us that Manual Transmission increase the value of mpg by 1.322 
+value more than Automatic Transmissions.
+
+```
+Summary
+
+From the above results, we conclude that:
+1. A Manual Transmission is generally better for MPG than an Automatic 
+Transmission.We also observe that the difference in mpg between automatic and 
+manual is higher for 4-cylinder cars compared to 6-cylinder and 8-cylinder cars.
+2. The value of MPG increases by 1.322 miles/gallon more for a Manual 
+transmission vehicle compared to an Automatic transmission vehicle.
+
+We have taken the below mentioned assumptions:
+1. The conclusions are based on only the mtcars dataset provided in R.
+2. We have less number of observations especially for 6 and 8-cylinder manual 
+transmission cars, so results might change if large number of new observations are used.
+3. We observed from the plot that even though there are couple of outliers, 
+they weren't very influential.So, we keep those in the dataset.
+```
